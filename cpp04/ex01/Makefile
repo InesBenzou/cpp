@@ -1,7 +1,9 @@
-NAME 		= ex01
+NAME 		= ex00
 CC			= c++
 CFLAGS		= -Wall -Wextra -Werror -std=c++98
 SRCS_NAME	=	main.cpp \
+				Animal.cpp \
+				Brain.cpp
 
 SRCS_DIR 	= ./srcs/
 
