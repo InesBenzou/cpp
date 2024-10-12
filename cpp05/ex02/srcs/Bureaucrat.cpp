@@ -1,10 +1,11 @@
 #include "../includes/Bureaucrat.hpp"
 #include "../includes/AForm.hpp"
+#include "../includes/Exceptions.hpp"
 
 Bureaucrat::Bureaucrat()
 {
     _name = "Jean";
-    _grade = 151;
+    _grade = 100;
 }
 
 Bureaucrat::Bureaucrat(const Bureaucrat& other)
@@ -36,15 +37,6 @@ int Bureaucrat::getGrade() const
 
 void Bureaucrat::incrementGrade()
 {
-    class GradeTooHighException : public std::exception
-    {
-        public :
-        virtual const char* what() const throw ()
-        {
-            return ("Invalid grade : incrementation impossible");
-        }
-    };
-
     try 
     {
         if (_grade <= 1)
@@ -65,16 +57,7 @@ void Bureaucrat::incrementGrade()
 
 void Bureaucrat::decrementGrade()
 {
-    class GradeTooLowException : public std::exception
-    {
-        public :
-        virtual const char* what() const throw ()
-        {
-            return ("Invalid grade : incrementation impossible");
-        }
-    };
-
-    try 
+	try 
     {
         if (_grade >= 150)
             throw GradeTooLowException();
@@ -92,12 +75,35 @@ void Bureaucrat::decrementGrade()
     }
 }
  
-void Bureaucrat::signForm(AForm form)
+void Bureaucrat::signForm(AForm& form)
 {
-    if (form.getIsSigned() == true)
-        std::cout << _name << "signed" << form.getName();
-    else if (form.getIsSigned() == false)
-        std::cout << _name << "couldn't sign because bureaucrat grade is " << _grade <<". To be able to sign, bureaucrat's grade has to be higher than " << form.getGradeToSign() << " and between 1 and 150." << std::endl;
+    // if (form.getIsSigned() == true)
+    //     std::cout << _name << " already signed " << form.getName() << std::endl;
+    // else
+	// {
+	// 	if (_grade < 1 || _grade > 150)
+	// 		std::cout << _name << " couldn't sign " << form.getName() << " bcause bureaucrat's grade is invalid"<< std::endl;
+	// 	else
+	// 	{
+	// 	if (_grade <= form.getGradeToSign())
+	// 	{
+	// 		form.setIsSigned(true);
+	// 		std::cout << _name << " signed " << form.getName() << std::endl;
+	// 	}
+	// 	else
+    //     	std::cout << _name << " couldn't sign because bureaucrat grade is " << _grade <<". To be able to sign, it must be <= " << form.getGradeToSign() << std::endl;
+	// 	}
+	// }
+	try
+	{
+        form.beSigned(*this);
+        std::cout << _name << " signed " << form.getName() << std::endl;
+    }
+	catch (std::exception &e)
+	{
+        std::cout << _name << " couldn’t sign " << form.getName() 
+                  << " because " << e.what() << std::endl;
+    }
 }
 
 std::ostream& operator<<(std::ostream& out, const Bureaucrat& other)
@@ -106,7 +112,18 @@ std::ostream& operator<<(std::ostream& out, const Bureaucrat& other)
     return out;
 }
 
-Bureaucrat::~Bureaucrat()
+void Bureaucrat::executeForm(AForm const &form) const
 {
-
+	try
+	{
+		form.execute(*this);
+		std::cout << this->getName() << " executed " << form.getName() << std::endl;
+	}
+	catch (const std::exception &e)
+	{
+		std::cout << this->getName() << " couldn't execute " << form.getName() 
+				<< " because " << e.what() << std::endl;
+	}
 }
+
+Bureaucrat::~Bureaucrat() {}

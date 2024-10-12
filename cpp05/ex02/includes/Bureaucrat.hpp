@@ -7,7 +7,7 @@
 class Bureaucrat
 {
     private :
-    std::string  _name;
+    std::string			_name;
     int                 _grade;
 
     public : 
@@ -18,8 +18,9 @@ class Bureaucrat
         void incrementGrade();
         void decrementGrade();
         Bureaucrat operator=(const Bureaucrat& other);
-        void signForm (AForm form);
-        ~Bureaucrat();
+        void signForm (AForm& form); //faire passer une reference de la classe (abstraite direct interdit)
+        void executeForm(AForm const & form) const;
+		~Bureaucrat();
 };
 
 std::ostream& operator<<(std::ostream& out, const Bureaucrat& other);
